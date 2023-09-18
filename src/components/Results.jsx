@@ -1,6 +1,11 @@
-//Todo: Show below table conditionally (only once result data is available)
-// Show fallback text if no data is available
-const Results = () => {
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+const Results = ({ results, INITIAL_INVESTMENT }) => {
   return (
     <table className='result'>
       <thead>
@@ -13,13 +18,27 @@ const Results = () => {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>YEAR NUMBER</td>
-          <td>TOTAL SAVINGS END OF YEAR</td>
-          <td>INTEREST GAINED IN YEAR</td>
-          <td>TOTAL INTEREST GAINED</td>
-          <td>TOTAL INVESTED CAPITAL</td>
-        </tr>
+        {results.map((result, index) => {
+          return (
+            <tr key={index}>
+              <td>{result.year}</td>
+              <td>{formatter.format(result.savingsEndOfYear)}</td>
+              <td>{formatter.format(result.yearlySavings)}</td>
+              <td>
+                {formatter.format(
+                  result.savingsEndOfYear -
+                    INITIAL_INVESTMENT -
+                    result.yearlySavings * result.year
+                )}
+              </td>
+              <td>
+                {formatter.format(
+                  INITIAL_INVESTMENT + result.yearlySavings * result.year
+                )}
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
